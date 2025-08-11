@@ -26,7 +26,7 @@ export default function Index() {
 
       <View className="flex-1 w-full flex-row justify-center  p-6">
               <View className="">
-                {/* Categories */}
+                {/* Categories */}git init
                 <View className="flex-row flex-wrap justify-center">
                   {Categories.map((category) => (
                     <TouchableOpacity
