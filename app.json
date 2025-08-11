@@ -3,7 +3,7 @@
     "name": "library-archives-system",
     "slug": "library-archives-system",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "libraryarchivessystem",
     "userInterfaceStyle": "automatic",
