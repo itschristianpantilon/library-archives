@@ -12,7 +12,7 @@ import SearchInput from "../../components/SearchInput";
 import * as FileSystem from "expo-file-system";
 import { getFiles, deleteFile } from "../../constants/db";
 
-const Categories = ["Books", "Thesis", "Magazine", "Reports"];
+const Categories = ["books", "thesis", "magazine", "reports"];
 
 export default function DeletePage() {
   const [items, setItems] = useState([]);

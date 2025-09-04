@@ -18,6 +18,10 @@ export default function RootLayout() {
     "Magnifico-Daytime-ITC-Std-Regular": require("../assets/fonts/Magnifico-Daytime-ITC-Std-Regular.otf"),
   });
 
+  useEffect(() => {
+  initDB();
+}, []);
+
    useEffect(() => {
     const setup = async () => {
       await initDB(); // ✅ await DB init

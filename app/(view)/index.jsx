@@ -7,7 +7,8 @@ import SearchInput from "../../components/SearchInput";
 import CloseButton from "../../components/CloseButton";
 import { getFiles } from "../../constants/db";
 
-const Categories = ["Books", "Thesis", "Magazine", "Reports"];
+const Categories = ["book", "thesis", "magazine", "reports"];
+
 
 export default function ViewPage() {
   const [items, setItems] = useState([]);
@@ -66,7 +67,7 @@ export default function ViewPage() {
           <Text className="text-gray-600 mb-1">Year: {item.yearPublished}</Text>
         </View>
         <View className="bg-green-100 px-3 py-1 rounded-full">
-          <Text className="text-green-800 text-sm font-medium">{item.type}</Text>
+          <Text className="text-green-800 text-sm font-medium capitalize">{item.type}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -92,7 +93,7 @@ export default function ViewPage() {
             onPress={() => setActiveCategory(category)}
           >
             <Text
-              className={`font-semibold text-lg ${
+              className={`font-semibold text-lg capitalize ${
                 activeCategory === category ? "text-white" : "text-gray-700"
               }`}
             >

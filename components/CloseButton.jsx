@@ -5,12 +5,14 @@ import { router } from 'expo-router'
 
 const CloseButton = () => {
   return (
-    <TouchableOpacity onPress={()=> router.back()}>
+    <TouchableOpacity className="flex-row items-center justify-center" onPress={()=> router.back()}>
       <Image 
-        source={icons.close}
-        className="w-14 h-14"
+        source={icons.back}
+        className="w-12 h-12 mr-2"
         resizeMode='contain'
       />
+
+      <Text className="font-pregular text-sm">Back</Text>
     </TouchableOpacity>
   )
 }

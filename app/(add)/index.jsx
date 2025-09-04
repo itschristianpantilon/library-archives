@@ -6,6 +6,7 @@ import CloseButton from "../../components/CloseButton";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { addFile } from "../../constants/db";
+import icons from "../../constants/icons";
 
 export default function AddPage() {
   const [showAddPage, setShowAddPage] = useState(false);
@@ -211,11 +212,15 @@ export default function AddPage() {
                 title="Scan" 
                 handlePress={() => setShowAddPage(true)}
                 textStyles="text-white" 
+                icon={icons.scan}
+                iconStyle="w-7 h-7"
                 />
               <CustomButton 
                 title="Upload" 
                 handlePress={() => setShowAddPage(true)} 
                 textStyles="text-white"
+                icon={icons.upload}
+                iconStyle="w-7 h-7"
                 />
              </View>
 

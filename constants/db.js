@@ -1,50 +1,41 @@
 import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabaseSync("library.db"); // ✅ use the sync API
+let db;
 
-// Initialize table
-export const initDB = () => {
-  db.transaction((tx) => {
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS library (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        author TEXT,
-        yearPublished TEXT,
-        type TEXT,
-        path TEXT
-      );`
+export const initDB = async () => {
+  if (!db) {
+    db = await SQLite.openDatabaseAsync("library.db");
+  }
+
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS library (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      author TEXT,
+      yearPublished TEXT,
+      type TEXT,
+      path TEXT
     );
-  });
+  `);
 };
 
-// Insert item
-export const addFile = (data, callback) => {
-  const { title, author, yearPublished, type, path } = data;
-  db.transaction((tx) => {
-    tx.executeSql(
-      "INSERT INTO library (title, author, yearPublished, type, path) VALUES (?, ?, ?, ?, ?)",
-      [title, author, yearPublished, type, path],
-      (_, result) => callback && callback(result),
-      (_, error) => console.log("Insert error:", error)
-    );
-  });
+export const addFile = async ({ title, author, yearPublished, type, path }) => {
+  if (!db) db = await SQLite.openDatabaseAsync("library.db");
+
+  await db.runAsync(
+    "INSERT INTO library (title, author, yearPublished, type, path) VALUES (?, ?, ?, ?, ?)",
+    [title, author, yearPublished, type, path]
+  );
 };
 
-// Get all items
-export const getFiles = (callback) => {
-  db.transaction((tx) => {
-    tx.executeSql("SELECT * FROM library", [], (_, { rows }) => {
-      callback(rows._array);
-    });
-  });
+export const getFiles = async () => {
+  if (!db) db = await SQLite.openDatabaseAsync("library.db");
+
+  return await db.getAllAsync("SELECT * FROM library");
 };
 
-// Delete item
-export const deleteFile = (id, callback) => {
-  db.transaction((tx) => {
-    tx.executeSql("DELETE FROM library WHERE id = ?", [id], (_, result) => {
-      callback && callback(result);
-    });
-  });
+export const deleteFile = async (id) => {
+  if (!db) db = await SQLite.openDatabaseAsync("library.db");
+
+  await db.runAsync("DELETE FROM library WHERE id = ?", [id]);
 };
