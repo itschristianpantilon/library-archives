@@ -4,7 +4,12 @@ import '../../app/global.css';
 const AddLayout = () => {
   return (
     <Stack>
-      <Stack.Screen name='index' options={{ headerShown: false }} />
+      <Stack.Screen name='index' 
+        options={{ 
+          headerShown: false,
+          presentation: 'card',
+          animation: 'none'
+        }} />
     </Stack>
   );
 }

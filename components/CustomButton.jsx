@@ -3,7 +3,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 const CustomButton = ({ title, handlePress, containerStyles, textStyles, isLoading, icon, iconStyle }) => {
   return (
    <TouchableOpacity 
-    className={`border bg-white w-24 rounded-2xl min-h-[50px] py-2 items-center justify-center ${containerStyles} ${isLoading ? 'opacity-50': ''} hover:opacity-50`}
+    className={`bg-green-600 w-28 rounded-md min-h-[50px] px-4 py-2 items-center justify-center flex-row ${containerStyles} ${isLoading ? 'opacity-50': ''} hover:opacity-50`}
     disabled={isLoading}
     onPress={handlePress}
     activeOpacity={0.7}
@@ -11,11 +11,11 @@ const CustomButton = ({ title, handlePress, containerStyles, textStyles, isLoadi
 
         <Image 
           source={icon}
-          className={iconStyle}
+          className={`${iconStyle} mr-2`}
           resizeMode='contain'
         />
 
-      <Text className={`text-black font-psemibold text-md ${textStyles}`}>{title}</Text>
+      <Text className={`text-black font-pregular text-md px-1 ${textStyles}`}>{title}</Text>
       
     </TouchableOpacity>
   )
