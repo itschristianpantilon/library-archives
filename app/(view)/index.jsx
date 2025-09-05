@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as FileSystem from "expo-file-system";
-import * as Linking from "expo-linking";
+import { useRouter } from "expo-router"; 
 import SearchInput from "../../components/SearchInput";
 import CloseButton from "../../components/CloseButton";
 import { getFiles } from "../../constants/db";
 
 const Categories = ["book", "thesis", "magazine", "reports"];
 
-
 export default function ViewPage() {
   const [items, setItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState(Categories[0]);
+  const router = useRouter();
 
   const loadItems = async () => {
     try {
@@ -28,26 +27,12 @@ export default function ViewPage() {
     loadItems();
   }, []);
 
-  const openFile = async (path) => {
-    try {
-      const fileInfo = await FileSystem.getInfoAsync(path);
-      if (!fileInfo.exists) {
-        Alert.alert("Error", "File not found.");
-        return;
-      }
-      await Linking.openURL(path);
-    } catch (err) {
-      console.log("Open error:", err);
-      Alert.alert("Error", "Could not open file.");
-    }
-  };
-
   const getTypeIcon = (type) => {
     switch (type) {
-      case "Books": return "📚";
-      case "Thesis": return "📄";
-      case "Magazine": return "📰";
-      case "Reports": return "📋";
+      case "book": return "📚";
+      case "thesis": return "📄";
+      case "magazine": return "📰";
+      case "reports": return "📋";
       default: return "📂";
     }
   };
@@ -56,7 +41,16 @@ export default function ViewPage() {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => openFile(item.path)}
+      onPress={() => {
+        if (!item.path) {
+          Alert.alert("Error", "File path not found.");
+          return;
+        }
+        router.push({
+          pathname: "../pdfReader",
+          params: { filePath: item.path, title: item.title }
+        });
+      }}
       className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200 mx-4"
     >
       <View className="flex-row items-start">

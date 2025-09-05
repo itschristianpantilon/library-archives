@@ -37,6 +37,7 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name='index' options={{ headerShown: false }} />
       <Stack.Screen name='Home' options={{ headerShown: false }} />
+      <Stack.Screen name='pdfReader' options={{ headerShown: false }} />
       <Stack.Screen name='(add)' options={{ headerShown: false }} />
       <Stack.Screen name='(delete)' options={{ headerShown: false }} />
       <Stack.Screen name='(view)' options={{ headerShown: false }} />
