@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router"; 
+import * as FileSystem from "expo-file-system";
+
 import SearchInput from "../../components/SearchInput";
 import CloseButton from "../../components/CloseButton";
 import { getFiles } from "../../constants/db";
+
+
+
 
 const Categories = ["book", "thesis", "magazine", "reports"];
 
@@ -37,31 +42,99 @@ export default function ViewPage() {
     }
   };
 
+  const getFileExtension = (filename) => {
+    return filename ? filename.split('.').pop().toLowerCase() : 'unknown';
+  };
+
+  const getSupportedFileIcon = (path) => {
+    const ext = getFileExtension(path);
+    switch (ext) {
+      case 'pdf': return '📕';
+      case 'doc':
+      case 'docx': return '📘';
+      case 'txt': return '📄';
+      case 'xls':
+      case 'xlsx': return '📊';
+      case 'ppt':
+      case 'pptx': return '📊';
+      default: return '📄';
+    }
+  };
+
+  const handleOpenFile = async (item) => {
+    try {
+      if (!item.path) {
+        Alert.alert("Error", "File path not found.");
+        return;
+      }
+
+      // Check if file exists
+      const fileInfo = await FileSystem.getInfoAsync(item.path);
+      if (!fileInfo.exists) {
+        Alert.alert("Error", "File not found. It may have been moved or deleted.");
+        return;
+      }
+
+      console.log("Opening file:", item.path);
+      console.log("File title:", item.title);
+
+      // Navigate to PDF reader with proper parameters
+      router.push({
+        pathname: "/pdfReader",
+        params: { 
+          filePath: item.path, 
+          title: item.title || "Document"
+        },
+      });
+    } catch (err) {
+      console.log("File open error:", err);
+      Alert.alert("Error", "Could not open file: " + err.message);
+    }
+  };
+
+
   const filteredItems = items.filter((item) => item.type === activeCategory);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => {
-        if (!item.path) {
-          Alert.alert("Error", "File path not found.");
-          return;
-        }
-        router.push({
-          pathname: "../pdfReader",
-          params: { filePath: item.path, title: item.title }
-        });
-      }}
+      onPress={() => handleOpenFile(item)}
       className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200 mx-4"
     >
       <View className="flex-row items-start">
-        <Text className="text-2xl mr-3">{getTypeIcon(item.type)}</Text>
+        <View className="mr-3">
+          <Text className="text-2xl">{getTypeIcon(item.type)}</Text>
+          {item.path && (
+            <Text className="text-lg">{getSupportedFileIcon(item.path)}</Text>
+          )}
+        </View>
+        
         <View className="flex-1">
           <Text className="text-lg font-bold text-gray-800 mb-2">{item.title}</Text>
           <Text className="text-gray-600 mb-1">Author: {item.author}</Text>
           <Text className="text-gray-600 mb-1">Year: {item.yearPublished}</Text>
+          
+          {item.path && (
+            <View className="mt-2">
+              <Text className="text-xs text-gray-500">
+                Format: {getFileExtension(item.path).toUpperCase()}
+              </Text>
+            </View>
+          )}
         </View>
-        <View className="bg-green-100 px-3 py-1 rounded-full">
-          <Text className="text-green-800 text-sm font-medium capitalize">{item.type}</Text>
+        
+        <View className="items-end">
+          <View className="bg-green-100 px-3 py-1 rounded-full mb-2">
+            <Text className="text-green-800 text-sm font-medium capitalize">
+              {item.type}
+            </Text>
+          </View>
+          
+          <TouchableOpacity
+            onPress={() => handleOpenFile(item)}
+            className="bg-blue-500 px-3 py-1 rounded"
+          >
+            <Text className="text-white text-xs font-medium">Open</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
