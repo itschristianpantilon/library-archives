@@ -14,17 +14,18 @@ export const initDB = async () => {
       author TEXT,
       yearPublished TEXT,
       type TEXT,
-      path TEXT
+      path TEXT,
+      uploadDate TEXT  
     );
   `);
 };
 
-export const addFile = async ({ title, author, yearPublished, type, path }) => {
+export const addFile = async ({ title, author, yearPublished, type, path, uploadDate }) => {
   if (!db) db = await SQLite.openDatabaseAsync("library.db");
 
   await db.runAsync(
-    "INSERT INTO library (title, author, yearPublished, type, path) VALUES (?, ?, ?, ?, ?)",
-    [title, author, yearPublished, type, path]
+    "INSERT INTO library (title, author, yearPublished, type, path, uploadDate) VALUES (?, ?, ?, ?, ?, ?)",
+    [title, author, yearPublished, type, path, uploadDate]
   );
 };
 

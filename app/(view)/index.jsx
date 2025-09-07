@@ -18,15 +18,26 @@ export default function ViewPage() {
   const [activeCategory, setActiveCategory] = useState(Categories[0]);
   const router = useRouter();
 
+const [counts, setCounts] = useState({ book: 0, thesis: 0, magazine: 0 });
+
   const loadItems = async () => {
     try {
       const result = await getFiles();
       setItems(result || []);
+
+      // compute counts
+      const bookCount = result.filter((f) => f.type === "book").length;
+      const thesisCount = result.filter((f) => f.type === "thesis").length;
+      const magazineCount = result.filter((f) => f.type === "magazine").length;
+
+      setCounts({ book: bookCount, thesis: thesisCount, magazine: magazineCount });
     } catch (err) {
       console.log("DB load error:", err);
       setItems([]);
+      setCounts({ book: 0, thesis: 0, magazine: 0 });
     }
   };
+
 
   useEffect(() => {
     loadItems();
@@ -112,7 +123,11 @@ export default function ViewPage() {
           <Text className="text-lg font-bold text-gray-800 mb-2">{item.title}</Text>
           <Text className="text-gray-600 mb-1">Author: {item.author}</Text>
           <Text className="text-gray-600 mb-1">Year: {item.yearPublished}</Text>
-          
+
+          {item.uploadDate && (
+            <Text className="text-gray-500 mb-1">Uploaded: {item.uploadDate}</Text>  // ✅ Show upload date
+          )}
+
           {item.path && (
             <View className="mt-2">
               <Text className="text-xs text-gray-500">
@@ -121,6 +136,7 @@ export default function ViewPage() {
             </View>
           )}
         </View>
+
         
         <View className="items-end">
           <View className="bg-green-100 px-3 py-1 rounded-full mb-2">
@@ -139,6 +155,8 @@ export default function ViewPage() {
       </View>
     </TouchableOpacity>
   );
+
+  
 
   return (
     <SafeAreaView className="flex-1 bg-green-100">
@@ -172,7 +190,34 @@ export default function ViewPage() {
 
       {/* Items List */}
       <View className="flex-1 mt-4">
-        {filteredItems.length === 0 ? (
+        {activeCategory === "reports" ? (
+          <View className="flex-1 justify-center items-center px-6">
+
+            <View className="bg-white shadow-md rounded-lg p-6 w-full">
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF BOOKS </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.book}</Text>
+              </View>
+
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF THESIS </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.thesis}</Text>
+              </View>
+
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF MAGAZINES </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.magazine}</Text>
+              </View>
+              
+
+              <View className="mt-4 border-t border-gray-300 pt-3">
+                <Text className="text-gray-600 text-sm">
+                  This report automatically updates when you add or delete files.
+                </Text>
+              </View>
+            </View>
+          </View>
+        ) : filteredItems.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <Text className="text-2xl mb-2">{getTypeIcon(activeCategory)}</Text>
             <Text className="text-gray-600 text-lg">
@@ -192,6 +237,7 @@ export default function ViewPage() {
           />
         )}
       </View>
+
     </SafeAreaView>
   );
 }

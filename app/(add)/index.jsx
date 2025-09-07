@@ -42,31 +42,37 @@ export default function AddPage() {
   };
 
   // Save to SQLite
-  const saveToDB = async () => {
-    const { title, author, yearPublished, type } = formData;
+// Save to SQLite
+const saveToDB = async () => {
+  const { title, author, yearPublished, type } = formData;
 
-    if (!title || !author || !yearPublished || !filePath) {
-      Alert.alert("Missing Info", "Please fill all fields and select a file.");
-      return;
-    }
+  if (!title || !author || !yearPublished || !filePath) {
+    Alert.alert("Missing Info", "Please fill all fields and select a file.");
+    return;
+  }
 
-    try {
-      await addFile({
-        title,
-        author,
-        yearPublished,
-        type,
-        path: filePath,
-      });
-      Alert.alert("Saved!", "File added to library.");
-      setFormData({ title: "", author: "", yearPublished: "", type: "book" });
-      setFilePath(null);
-      setShowAddPage(false);
-    } catch (err) {
-      console.log("DB insert error:", err);
-      Alert.alert("Error", "Could not save file.");
-    }
-  };
+  try {
+    const uploadDate = new Date().toLocaleDateString(); // ✅ Auto-set date (MM/DD/YYYY or locale format)
+
+    await addFile({
+      title,
+      author,
+      yearPublished,
+      type,
+      path: filePath,
+      uploadDate,   // ✅ Save date
+    });
+
+    Alert.alert("Saved!", "File added to library.");
+    setFormData({ title: "", author: "", yearPublished: "", type: "book" });
+    setFilePath(null);
+    setShowAddPage(false);
+  } catch (err) {
+    console.log("DB insert error:", err);
+    Alert.alert("Error", "Could not save file.");
+  }
+};
+
 
   // ---------------- UI ----------------
   if (showAddPage) {

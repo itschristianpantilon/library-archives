@@ -12,19 +12,28 @@ import SearchInput from "../../components/SearchInput";
 import * as FileSystem from "expo-file-system";
 import { getFiles, deleteFile } from "../../constants/db";
 
-const Categories = ["books", "thesis", "magazine", "reports"];
+const Categories = ["book", "thesis", "magazine", "reports"];
 
 export default function DeletePage() {
   const [items, setItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState(Categories[0]);
+  const [counts, setCounts] = useState({ book: 0, thesis: 0, magazine: 0 });
 
   const loadItems = async () => {
     try {
       const result = await getFiles();
       setItems(result || []);
+
+      // compute counts for reports
+      const bookCount = result.filter((f) => f.type === "book").length;
+      const thesisCount = result.filter((f) => f.type === "thesis").length;
+      const magazineCount = result.filter((f) => f.type === "magazine").length;
+
+      setCounts({ book: bookCount, thesis: thesisCount, magazine: magazineCount });
     } catch (err) {
       console.log("DB load error:", err);
       setItems([]);
+      setCounts({ book: 0, thesis: 0, magazine: 0 });
     }
   };
 
@@ -57,17 +66,15 @@ export default function DeletePage() {
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case "Books": return "📚";
-      case "Thesis": return "📄";
-      case "Magazine": return "📰";
-      case "Reports": return "📋";
+      case "book": return "📚";
+      case "thesis": return "📄";
+      case "magazine": return "📰";
+      case "reports": return "📋";
       default: return "📂";
     }
   };
 
-  const filteredItems = items.filter(
-    (item) => item.type === activeCategory
-  );
+  const filteredItems = items.filter((item) => item.type === activeCategory);
 
   const renderItem = ({ item }) => (
     <View className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200 mx-4 flex-row justify-between items-center">
@@ -112,7 +119,7 @@ export default function DeletePage() {
             onPress={() => setActiveCategory(category)}
           >
             <Text
-              className={`font-semibold text-lg ${
+              className={`font-semibold text-lg capitalize ${
                 activeCategory === category
                   ? "text-white"
                   : "text-gray-700"
@@ -126,7 +133,32 @@ export default function DeletePage() {
 
       {/* Items List */}
       <View className="flex-1 mt-2">
-        {filteredItems.length === 0 ? (
+        {activeCategory === "reports" ? (
+          <View className="flex-1 justify-center items-center px-6">
+            <View className="bg-white shadow-md rounded-lg p-6 w-full">
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF BOOKS </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL: {counts.book}</Text>
+              </View>
+
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF THESIS </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL: {counts.thesis}</Text>
+              </View>
+
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="text-gray-800 font-pregular text-2xl">LIST OF MAGAZINES </Text>
+                <Text className="text-gray-800 font-psemibold">TOTAL: {counts.magazine}</Text>
+              </View>
+
+              <View className="mt-4 border-t border-gray-300 pt-3">
+                <Text className="text-gray-600 text-sm">
+                  This report automatically updates when you add or delete files.
+                </Text>
+              </View>
+            </View>
+          </View>
+        ) : filteredItems.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <Text className="text-2xl mb-2">{getTypeIcon(activeCategory)}</Text>
             <Text className="text-gray-600 text-lg">

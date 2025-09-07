@@ -12,7 +12,7 @@ const CloseButton = () => {
         resizeMode='contain'
       />
 
-      <Text className="font-pregular text-sm text-green-600">Back</Text>
+      <Text className="font-pregular text-sm">Back</Text>
     </TouchableOpacity>
   )
 }
