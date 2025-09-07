@@ -100,11 +100,15 @@ export default function DeletePage() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-green-100">
+    <SafeAreaView className="flex-1 bg-green-200">
       {/* Header */}
-      <View className="w-full py-1 px-10 flex-row items-center justify-between">
-        <CloseButton />
-        <SearchInput placeholder="Select a file to Delete" />
+      <View className="w-full py-2 flex-row items-center justify-between">
+        <View className="px-5">
+          <CloseButton />
+        </View>
+        <View className="w-full justify-center items-center absolute">
+          <SearchInput placeholder="Select a file to Delete" />
+        </View>
         <View />
       </View>
 
@@ -134,7 +138,7 @@ export default function DeletePage() {
       {/* Items List */}
       <View className="flex-1 mt-2">
         {activeCategory === "reports" ? (
-          <View className="flex-1 justify-center items-center px-6">
+          <View className="flex-1 justify-start items-center px-6">
             <View className="bg-white shadow-md rounded-lg p-6 w-full">
               <View className="flex-row justify-between items-center py-2">
                 <Text className="text-gray-800 font-pregular text-2xl">LIST OF BOOKS </Text>

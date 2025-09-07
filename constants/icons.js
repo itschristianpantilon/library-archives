@@ -6,6 +6,7 @@ import view from '../assets/icons/view.png';
 import back from '../assets/icons/back.png';
 import scan from '../assets/icons/scan.png';
 import upload from '../assets/icons/upload.png';
+import backWhite from '../assets/icons/backWhite.png';
 
 export default {
     add,
@@ -16,5 +17,6 @@ export default {
     back,
     scan,
     upload,
+    backWhite,
     
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import CloseButton from "../../components/CloseButton";
@@ -77,16 +77,22 @@ const saveToDB = async () => {
   // ---------------- UI ----------------
   if (showAddPage) {
     return (
-      <ScrollView className="flex-1 bg-green-100">
+      <ScrollView className="flex-1 bg-green-200">
         <View className="px-6 py-8">
           {/* Header */}
-          <View className="flex-row items-center justify-between mb-8">
+          <View className="flex-row items-center justify-between mb-8 w-full">
             <TouchableOpacity
               onPress={() => setShowAddPage(false)}
-              className="bg-green-400 px-4 py-2 rounded-lg"
+              className="bg-green-500 px-4 py-2 flex-row justify-center items-center rounded-lg"
             >
+              <Image 
+                source={icons.backWhite}
+                className="w-7 h-7 mr-2"
+                resizeMode="contain"
+              />
               <Text className="text-white font-medium">Close</Text>
             </TouchableOpacity>
+
             <Text className="text-2xl font-bold text-gray-800">Add New Item</Text>
             <View className="w-16" />
           </View>
@@ -105,9 +111,9 @@ const saveToDB = async () => {
                 onPress={() =>
                   setFormData((prev) => ({ ...prev, type: type.key }))
                 }
-                className={`mr-3 mb-3 px-6 py-3 rounded-full border-2 ${
+                className={`mr-3 mb-3 px-6 py-3 rounded-lg ${
                   formData.type === type.key
-                    ? "bg-green-400 border-gray-200"
+                    ? "bg-green-500 border-gray-200"
                     : "bg-white border-gray-300"
                 }`}
               >
@@ -125,7 +131,9 @@ const saveToDB = async () => {
           {/* Form */}
           <View className="space-y-6">
             <View>
-              <Text className="text-lg font-semibold text-gray-700 mb-2">Title *</Text>
+              <View className="flex-row mt-2">
+                <Text className="text-lg font-semibold text-gray-700 mb-2">Title </Text><Text className="text-red-600 text-lg">*</Text>
+              </View>
               <TextInput
                 value={formData.title}
                 onChangeText={(text) =>
@@ -138,7 +146,9 @@ const saveToDB = async () => {
             </View>
 
             <View>
-              <Text className="text-lg font-semibold text-gray-700 mb-2">Author *</Text>
+              <View className="flex-row mt-2">
+                <Text className="text-lg font-semibold text-gray-700 mb-2">Author </Text><Text className="text-red-600 text-lg">*</Text>
+              </View>
               <TextInput
                 value={formData.author}
                 onChangeText={(text) =>
@@ -150,9 +160,9 @@ const saveToDB = async () => {
             </View>
 
             <View>
-              <Text className="text-lg font-semibold text-gray-700 mb-2">
-                Year Published *
-              </Text>
+              <View className="flex-row mt-2">
+                <Text className="text-lg font-semibold text-gray-700 mb-2">Year Published </Text><Text className="text-red-600 text-lg">*</Text>
+              </View>
               <TextInput
                 value={formData.yearPublished}
                 onChangeText={(text) =>
@@ -193,48 +203,57 @@ const saveToDB = async () => {
 
   // Home page with buttons
   return (
-    <SafeAreaView className="items-center justify-between w-full h-full bg-green-100">
+    <SafeAreaView className="items-center justify-between w-full h-full bg-green-200">
       <View className="w-full py-1 px-10 flex-row items-center justify-between">
         <CloseButton />
         <View />
       </View>
-      <View className="flex-row flex-1">
-        {/* Buttons */}
-        {/* <View className="screen-center gap-10 px-5">
-          <CustomButton title="Add" textStyles="text-white" containerStyles="bg-green-400" />
-          <CustomButton title="View" isLoading={true} />
-          <CustomButton title="Delete" isLoading={true} />
-        </View> */}
 
+      <View className="flex-row items-center justify-center w-full h-full flex-1 absolute">
         {/* Welcome Text */}
         <View className="justify-center items-center">
           <View className="screen-center py-10">
             <Text className="text-7xl font-pprimary text-green-600">WELCOME TO SLSU</Text>
-            <Text className="text-5xl font-pprimary text-green-600">LIBRARY ARCHIVE`S</Text>
+            <Text className="text-5xl font-pprimary text-green-600">LIBRARY ARCHIVE'S</Text>
           </View>
 
-             <View className="w-full flex-row screen-center gap-3">
-              <CustomButton 
-                title="Scan" 
-                handlePress={() => setShowAddPage(true)}
-                textStyles="text-white" 
-                icon={icons.scan}
-                iconStyle="w-7 h-7"
-                />
-              <CustomButton 
-                title="Upload" 
-                handlePress={() => setShowAddPage(true)} 
-                textStyles="text-white"
-                icon={icons.upload}
-                iconStyle="w-7 h-7"
-                />
-             </View>
-
-          {/* Scan & Upload */}
-         
+          {/* Buttons */}
+          <View className="w-full flex-row screen-center gap-3">
+            <CustomButton 
+              title="Scan" 
+              handlePress={() => setShowAddPage(true)}
+              textStyles="text-white" 
+              icon={icons.scan}
+              iconStyle="w-7 h-7"
+            />
+            <CustomButton 
+              title="Upload" 
+              handlePress={() => setShowAddPage(true)} 
+              textStyles="text-white"
+              icon={icons.upload}
+              iconStyle="w-7 h-7"
+            />
+          </View>
 
         </View>
       </View>
-    </SafeAreaView>
+
+      {/* Upload Instructions */}
+      <View className="px-8 pb-10">
+        <Text className="text-xl font-psemibold text-gray-800 text-center mb-3">
+          How to Upload Files
+        </Text>
+        <Text className="text-base text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button above.</Text>
+        <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF, DOCX, TXT, etc.).</Text>
+        <Text className="text-base text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
+        <Text className="text-base text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
+        <Text className="text-base text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
+
+        <Text className="text-sm text-gray-500 mt-3 text-center">
+          📌 Note: Uploaded files will be stored in the library system and can be viewed or deleted later.
+        </Text>
+      </View>
+</SafeAreaView>
+
   );
 }

@@ -159,11 +159,15 @@ const [counts, setCounts] = useState({ book: 0, thesis: 0, magazine: 0 });
   
 
   return (
-    <SafeAreaView className="flex-1 bg-green-100">
+    <SafeAreaView className="flex-1 bg-green-200">
       {/* Header */}
-      <View className="w-full py-1 px-10 flex-row items-center justify-between">
-        <CloseButton />
-        <SearchInput placeholder="Search for a Book, Thesis, Magazine" />
+      <View className="w-full py-1 flex-row items-center justify-between">
+         <View className="px-5">
+            <CloseButton />
+          </View>
+        <View className="w-full justify-center items-center absolute">
+          <SearchInput placeholder="Search for a Book, Thesis, Magazine" />
+        </View>
         <View />
       </View>
 
@@ -191,7 +195,7 @@ const [counts, setCounts] = useState({ book: 0, thesis: 0, magazine: 0 });
       {/* Items List */}
       <View className="flex-1 mt-4">
         {activeCategory === "reports" ? (
-          <View className="flex-1 justify-center items-center px-6">
+          <View className="flex-1 items-center justify-start px-6">
 
             <View className="bg-white shadow-md rounded-lg p-6 w-full">
               <View className="flex-row justify-between items-center py-2">
