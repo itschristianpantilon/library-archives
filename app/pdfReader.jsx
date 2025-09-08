@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { WebView } from 'react-native-webview';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import Pdf from "react-native-pdf";
 
 export default function FixedPdfViewer() {
   const router = useRouter();
   const { filePath, title } = useLocalSearchParams();
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fileType, setFileType] = useState(null);
   const [fileSize, setFileSize] = useState(0);
   const [textContent, setTextContent] = useState(null);
-  const [webViewUri, setWebViewUri] = useState(null);
+  const [totalPages, setTotalPages] = useState(1000);
+  const [page, setPage] = useState(1);
+  const [bookMode, setBookMode] = useState(false);
 
   useEffect(() => {
     loadFile();
   }, [filePath]);
 
-  const getFileExtension = (path) => {
-    return path.split('.').pop().toLowerCase();
-  };
+  const getFileExtension = (path) => path.split(".").pop().toLowerCase();
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const loadFile = async () => {
@@ -53,22 +53,14 @@ export default function FixedPdfViewer() {
       }
 
       setFileSize(fileInfo.size || 0);
-      console.log(`Loading ${extension} file:`, filePath);
-      console.log("File size:", formatFileSize(fileInfo.size));
 
-      if (extension === 'txt') {
-        // For text files, read content directly
+      if (extension === "txt") {
         const content = await FileSystem.readAsStringAsync(filePath);
         setTextContent(content);
-      } else if (extension === 'pdf') {
-        // For PDF files, use file:// URI directly instead of base64
-        // This avoids the TransactionTooLargeException
-        setWebViewUri(filePath);
       }
 
       setLoading(false);
     } catch (err) {
-      console.log("Load file error:", err);
       setError("Failed to load file: " + err.message);
       setLoading(false);
     }
@@ -84,23 +76,51 @@ export default function FixedPdfViewer() {
         Alert.alert("Not Available", "File sharing is not available on this device");
       }
     } catch (error) {
-      console.log("Share error:", error);
       Alert.alert("Error", "Could not open file with external app");
     }
   };
 
-  const getFileIcon = (type) => {
-    switch (type) {
-      case 'pdf': return '📄';
-      case 'doc':
-      case 'docx': return '📝';
-      case 'xls':
-      case 'xlsx': return '📊';
-      case 'ppt':
-      case 'pptx': return '📽️';
-      case 'txt': return '📃';
-      default: return '📄';
+  // Handle PDF load complete - ensure totalPages is set
+  const handlePdfLoadComplete = (pages) => {
+    console.log("PDF loaded with", pages, "pages");
+    setTotalPages(pages);
+  };
+
+  // Book mode navigation logic
+  const getLeftPage = () => {
+    if (page === 1) return 1;
+    return page % 2 === 0 ? page - 1 : page;
+  };
+
+  const getRightPage = () => {
+    if (page === 1) return 2;
+    return page % 2 === 0 ? page : page + 1;
+  };
+
+  const goToNextSpread = () => {
+    const rightPage = getRightPage();
+    if (rightPage < totalPages) {
+      setPage(rightPage + 1);
     }
+  };
+
+  const goToPrevSpread = () => {
+    const leftPage = getLeftPage();
+    if (leftPage > 2) {
+      setPage(leftPage - 2);
+    } else if (page > 1) {
+      setPage(1);
+    }
+  };
+
+  const canGoNext = () => {
+    if (totalPages === 0) return false;
+    const rightPage = getRightPage();
+    return rightPage < totalPages;
+  };
+
+  const canGoPrev = () => {
+    return page > 1;
   };
 
   const renderContent = () => {
@@ -144,8 +164,8 @@ export default function FixedPdfViewer() {
       );
     }
 
-    // Text files
-    if (fileType === 'txt' && textContent) {
+    // Text file viewer
+    if (fileType === "txt" && textContent) {
       return (
         <ScrollView className="flex-1 bg-white">
           <View className="p-4">
@@ -159,94 +179,154 @@ export default function FixedPdfViewer() {
       );
     }
 
-    // PDF files using direct file URI
-    if (fileType === 'pdf' && webViewUri) {
-      return (
-        <View className="flex-1">
-          <WebView
-            source={{ 
-              uri: webViewUri.startsWith('file://') ? webViewUri : `file://${webViewUri}`
-            }}
-            style={{ flex: 1 }}
-            onError={(syntheticEvent) => {
-              const { nativeEvent } = syntheticEvent;
-              console.log('PDF WebView error: ', nativeEvent);
-              setError("This PDF cannot be displayed in the app. Please use 'Open Externally' to view with a PDF reader app.");
-            }}
-            onLoadStart={() => {
-              console.log('PDF loading started');
-              setLoading(true);
-            }}
-            onLoadEnd={() => {
-              console.log('PDF loading completed');
-              setLoading(false);
-            }}
-            javaScriptEnabled={true}
-            allowFileAccess={true}
-            onHttpError={(syntheticEvent) => {
-              console.log('PDF HTTP Error:', syntheticEvent.nativeEvent);
-            }}
-            renderError={(errorName) => (
-              <View className="flex-1 items-center justify-center px-4">
-                <Text className="text-6xl mb-4">📄</Text>
-                <Text className="text-xl font-bold text-gray-800 mb-2">PDF Not Supported</Text>
-                <Text className="text-gray-600 text-center mb-4">
-                  This device cannot display PDFs in the app.
-                </Text>
-                <TouchableOpacity
-                  onPress={openWithExternalApp}
-                  className="bg-red-600 px-6 py-3 rounded-lg"
-                >
-                  <Text className="text-white font-semibold">Open with PDF Reader</Text>
-                </TouchableOpacity>
+    // PDF viewer
+    if (fileType === "pdf") {
+      const source = { uri: filePath.startsWith("file://") ? filePath : `file://${filePath}` };
+      
+      console.log("=== PDF SOURCE DEBUG ===");
+      console.log("Original filePath:", filePath);
+      console.log("Constructed source:", source);
+      console.log("========================");
+
+      if (bookMode) {
+        const leftPage = getLeftPage();
+        const rightPage = getRightPage();
+        
+        console.log("=== BOOK MODE RENDER ===");
+        console.log("Current totalPages:", totalPages);
+        console.log("Current page state:", page);
+        console.log("Left page:", leftPage);
+        console.log("Right page:", rightPage);
+        console.log("Right page <= totalPages:", rightPage <= totalPages);
+        console.log("========================");
+        
+        return (
+          <View className="flex-1 bg-black">
+            
+            <View className="flex-row flex-1 items-center">
+              {/* Left Page */}
+              <View className="flex-1 border-r border-gray-600">
+                <Pdf
+                  key={`left-${leftPage}`}
+                  source={source}
+                  page={leftPage}
+                  scrollEnabled={false} 
+                  style={{
+                    width: Dimensions.get("window").width / 2,
+                    height: "100%",
+                  }}
+                  onLoadComplete={handlePdfLoadComplete}
+                  onError={(err) => {
+                    console.log("PDF Error:", err);
+                    setError("Failed to load PDF: " + err.message);
+                  }}
+                />
               </View>
-            )}
-          />
-        </View>
+
+              {/* Right Page */}
+              <View className="flex-1">
+                {totalPages > 0 && rightPage <= totalPages ? (
+                  <Pdf
+                    key={`right-${rightPage}`}
+                    source={source}
+                    page={rightPage}
+                    scrollEnabled={false} 
+                    style={{
+                      width: Dimensions.get("window").width / 2,
+                      height: "100%",
+                    }}
+                    onError={(err) => {
+                      console.log("Right PDF Error:", err);
+                    }}
+                  />
+                ) : totalPages > 0 ? (
+                  <View className="flex-1 items-center justify-center bg-gray-800">
+                    <Text className="text-gray-400">End of Document</Text>
+                  </View>
+                ) : (
+                  <View className="flex-1 items-center justify-center bg-gray-700">
+                    <ActivityIndicator size="small" color="#ffffff" />
+                    <Text className="text-gray-400 mt-2">Loading...</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Navigation Controls */}
+            <View className="flex-row justify-between px-6 py-3 bg-white border-t border-gray-200">
+              {/* Previous */}
+              <TouchableOpacity
+                onPress={goToPrevSpread}
+                disabled={!canGoPrev()}
+                className={`px-4 py-2 rounded-lg ${
+                  canGoPrev() ? "bg-green-600" : "bg-gray-300"
+                }`}
+              >
+                <Text className={`font-semibold ${
+                  canGoPrev() ? "text-white" : "text-gray-500"
+                }`}>
+                  ⬅ Back
+                </Text>
+              </TouchableOpacity>
+
+              {/* Page Info */}
+              <Text className="text-gray-700 font-bold self-center">
+                {totalPages > 0 ? (
+                  leftPage === rightPage ? (
+                    `Page ${leftPage} / ${totalPages}`
+                  ) : (
+                    rightPage <= totalPages ? 
+                      `Pages ${leftPage}-${rightPage} / ${totalPages}` :
+                      `Page ${leftPage} / ${totalPages}`
+                  )
+                ) : (
+                  "Loading..."
+                )}
+              </Text>
+
+              {/* Next */}
+              <TouchableOpacity
+                onPress={goToNextSpread}
+                disabled={!canGoNext()}
+                className={`px-4 py-2 rounded-lg ${
+                  canGoNext() ? "bg-green-600" : "bg-gray-300"
+                }`}
+              >
+                <Text className={`font-semibold ${
+                  canGoNext() ? "text-white" : "text-gray-500"
+                }`}>
+                  Next ➡
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      }
+
+      // Normal scrolling mode
+      return (
+        <Pdf
+          source={source}
+          style={{ flex: 1, width: Dimensions.get("window").width }}
+          onLoadComplete={handlePdfLoadComplete}
+          onError={(err) => {
+            console.log("PDF Error:", err);
+            setError("Failed to load PDF: " + err.message);
+          }}
+        />
       );
     }
 
-    // All other file types - show info and external open option
+    // Other file types
     return (
-      <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-8xl mb-6">{getFileIcon(fileType)}</Text>
-        <Text className="text-2xl font-bold text-gray-800 mb-2 text-center">
-          {title}
-        </Text>
-        <Text className="text-lg text-gray-600 mb-6 text-center">
-          {fileType?.toUpperCase()} Document
-        </Text>
-        
-        <View className="bg-white p-6 rounded-xl mb-6 w-full shadow-sm">
-          <Text className="text-center text-gray-700 mb-4">
-            This file type requires an external application to view properly.
-          </Text>
-          
-          <View className="bg-gray-50 p-4 rounded-lg">
-            <Text className="text-sm text-gray-600 mb-1">
-              <Text className="font-semibold">File:</Text> {title}
-            </Text>
-            <Text className="text-sm text-gray-600 mb-1">
-              <Text className="font-semibold">Type:</Text> {fileType?.toUpperCase()}
-            </Text>
-            <Text className="text-sm text-gray-600">
-              <Text className="font-semibold">Size:</Text> {formatFileSize(fileSize)}
-            </Text>
-          </View>
-        </View>
-
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-gray-600">This file type is not supported for preview</Text>
         <TouchableOpacity
           onPress={openWithExternalApp}
-          className="bg-blue-600 px-8 py-4 rounded-xl mb-4 w-full"
+          className="mt-4 bg-blue-600 px-6 py-3 rounded-lg"
         >
-          <Text className="text-white font-bold text-lg text-center">
-            Open with External App
-          </Text>
+          <Text className="text-white font-semibold">Open Externally</Text>
         </TouchableOpacity>
-
-        <Text className="text-gray-500 text-sm text-center">
-          Recommended apps: Adobe Reader, Microsoft Word, Google Docs, etc.
-        </Text>
       </View>
     );
   };
@@ -272,27 +352,27 @@ export default function FixedPdfViewer() {
             </Text>
           )}
         </View>
-        
+
         <TouchableOpacity 
-          onPress={openWithExternalApp}
-          className="px-3 py-2 bg-blue-100 rounded-lg"
+          onPress={() => setBookMode(!bookMode)} 
+          className="px-3 py-2 bg-yellow-100 rounded-lg"
         >
-          <Text className="text-blue-700 font-semibold text-xs">External</Text>
+          <Text className="text-yellow-700 font-semibold text-xs">
+            {bookMode ? "Single Page" : "Book Mode"}
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Content */}
-      <View className="flex-1">
-        {renderContent()}
-      </View>
+      <View className="flex-1">{renderContent()}</View>
 
       {/* Footer */}
       {!loading && !error && (
         <View className="bg-white px-4 py-2 border-t border-gray-200">
           <Text className="text-center text-gray-600 text-sm">
-            {fileType === 'txt' ? 'Text Preview' : 
-             fileType === 'pdf' ? 'PDF Viewer (Beta)' : 
-             'File Manager'}
+            {fileType === "txt" ? "Text Preview" : 
+             fileType === "pdf" ? (bookMode ? "Book-style PDF Viewer" : "PDF Viewer") : 
+             "File Manager"}
           </Text>
         </View>
       )}

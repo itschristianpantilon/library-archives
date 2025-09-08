@@ -74,7 +74,18 @@ export default function DeletePage() {
     }
   };
 
-  const filteredItems = items.filter((item) => item.type === activeCategory);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // 🔍 Apply both category filter and search filter
+  const filteredItems = items.filter((item) => {
+    const matchesCategory = item.type === activeCategory;
+    const matchesSearch = searchQuery === "" || 
+      item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.author?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.yearPublished?.toString().includes(searchQuery);
+    return matchesCategory && matchesSearch;
+  });
+
 
   const renderItem = ({ item }) => (
     <View className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200 mx-4 flex-row justify-between items-center">
@@ -107,7 +118,10 @@ export default function DeletePage() {
           <CloseButton />
         </View>
         <View className="w-full justify-center items-center absolute">
-          <SearchInput placeholder="Select a file to Delete" />
+          <SearchInput 
+            placeholder="Search for a Book, Thesis, Magazine" 
+            onSearch={setSearchQuery} 
+          />
         </View>
         <View />
       </View>
