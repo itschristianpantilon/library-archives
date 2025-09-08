@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "library-archives-system",
+    "name": "Library Archive",
     "slug": "library-archives-system",
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/libraryLogo.png",
     "scheme": "libraryarchivessystem",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/libraryLogo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

@@ -238,7 +238,7 @@ const saveToDB = async () => {
                 How to Upload Files
               </Text>
               <Text className="text-base text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button above.</Text>
-              <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF, DOCX, TXT, etc.).</Text>
+              <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF).</Text>
               <Text className="text-base text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
               <Text className="text-base text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
               <Text className="text-base text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
