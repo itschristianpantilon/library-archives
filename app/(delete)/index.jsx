@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CloseButton from "../../components/CloseButton";
@@ -97,23 +98,29 @@ export default function DeletePage() {
           </Text>
           <Text className="text-gray-600 mb-1">Author: {item.author}</Text>
           <Text className="text-gray-600 mb-1">Year: {item.yearPublished}</Text>
+
+          {item.uploadDate && (
+              <Text className="text-gray-500 mb-1">Date Published: {item.uploadDate}</Text>  // ✅ Show upload date
+          )}
         </View>
       </View>
 
       {/* Delete Button */}
-      <TouchableOpacity
-        onPress={() => handleDelete(item.id, item.path)}
-        className="bg-red-500 px-3 py-1 rounded"
-      >
-        <Text className="text-white text-sm">Delete</Text>
-      </TouchableOpacity>
+      <View className="h-full">
+        <TouchableOpacity
+          onPress={() => handleDelete(item.id, item.path)}
+          className="bg-red-500 px-5 py-2 rounded-md"
+        >
+          <Text className="text-white font-psemibold text-sm">Delete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-green-200">
+    <SafeAreaView className="flex-1 bg-green-100">
       {/* Header */}
-      <View className="w-full py-2 flex-row items-center justify-between">
+      <View className="w-full py-5 flex-row items-center justify-between bg-green-600">
         <View className="px-5">
           <CloseButton />
         </View>
@@ -128,25 +135,28 @@ export default function DeletePage() {
 
       {/* Categories */}
       <View className="flex-row flex-wrap justify-center p-6">
-        {Categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            className={`px-12 py-6 rounded-none font-semibold transition duration-300 ${
-              activeCategory === category ? "bg-green-600" : "bg-white"
-            }`}
-            onPress={() => setActiveCategory(category)}
-          >
-            <Text
-              className={`font-semibold text-lg capitalize ${
-                activeCategory === category
-                  ? "text-white"
-                  : "text-gray-700"
+
+        <View className="flex-row shadow-lg border border-gray-300"> 
+          {Categories.map((category) => (
+            <TouchableOpacity
+              key={category}
+              className={`px-12 py-6 rounded-none font-semibold transition duration-300 ${
+                activeCategory === category ? "bg-green-600" : "bg-white"
               }`}
+              onPress={() => setActiveCategory(category)}
             >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                className={`font-semibold text-lg capitalize ${
+                  activeCategory === category
+                    ? "text-white"
+                    : "text-gray-700"
+                }`}
+              >
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
       {/* Items List */}
@@ -193,6 +203,8 @@ export default function DeletePage() {
           />
         )}
       </View>
+
+      <StatusBar backgroundColor='#16A34A' style='dark' />
     </SafeAreaView>
   );
 }

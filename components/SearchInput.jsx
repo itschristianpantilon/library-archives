@@ -13,9 +13,9 @@ const SearchInput = ({ initialQuery, placeholder, onSearch }) => {
   };
 
   return (
-    <View className='h-16 w-1/2 px-4 bg-black-100 rounded-2xl border-2 border-black-200 items-center flex-row space-x-4 '>
+    <View className='h-16 w-1/2 px-4 bg-white rounded-2xl  border-black-200 items-center flex-row space-x-4 '>
       <TextInput 
-        className='text-base mt-0.5 text-black flex-1 font-pregular'
+        className='text-base mt-0.5 text-black flex-1 font-plight'
         value={query}
         placeholder={placeholder}
         placeholderTextColor="#000"

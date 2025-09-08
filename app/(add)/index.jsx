@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert, Image } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert, Image, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import CloseButton from "../../components/CloseButton";
@@ -203,9 +203,11 @@ const saveToDB = async () => {
 
   // Home page with buttons
   return (
-    <SafeAreaView className="items-center justify-between w-full h-full bg-green-200">
-      <View className="w-full py-1 px-10 flex-row items-center justify-between">
-        <CloseButton />
+    <SafeAreaView className="items-center justify-between w-full h-full bg-green-100">
+      <View className="w-full py-1 px-10 flex-row items-center justify-between bg-green-600">
+       
+          <CloseButton />
+        
         <View />
       </View>
 
@@ -218,14 +220,7 @@ const saveToDB = async () => {
           </View>
 
           {/* Buttons */}
-          <View className="w-full flex-row screen-center gap-3">
-            <CustomButton 
-              title="Scan" 
-              handlePress={() => setShowAddPage(true)}
-              textStyles="text-white" 
-              icon={icons.scan}
-              iconStyle="w-7 h-7"
-            />
+          <View className="w-full flex-row justify-center items-center">
             <CustomButton 
               title="Upload" 
               handlePress={() => setShowAddPage(true)} 
@@ -237,22 +232,22 @@ const saveToDB = async () => {
 
         </View>
       </View>
+            {/* Upload Instructions */}
+            <View className="px-8 pb-10">
+              <Text className="text-xl font-psemibold text-gray-800 text-center mb-3">
+                How to Upload Files
+              </Text>
+              <Text className="text-base text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button above.</Text>
+              <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF, DOCX, TXT, etc.).</Text>
+              <Text className="text-base text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
+              <Text className="text-base text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
+              <Text className="text-base text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
 
-      {/* Upload Instructions */}
-      <View className="px-8 pb-10">
-        <Text className="text-xl font-psemibold text-gray-800 text-center mb-3">
-          How to Upload Files
-        </Text>
-        <Text className="text-base text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button above.</Text>
-        <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF, DOCX, TXT, etc.).</Text>
-        <Text className="text-base text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
-        <Text className="text-base text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
-        <Text className="text-base text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
-
-        <Text className="text-sm text-gray-500 mt-3 text-center">
-          📌 Note: Uploaded files will be stored in the library system and can be viewed or deleted later.
-        </Text>
-      </View>
+              <Text className="text-sm text-gray-500 mt-3 text-center">
+                📌 Note: Uploaded files will be stored in the library system and can be viewed or deleted later.
+              </Text>
+            </View>
+    <StatusBar backgroundColor='#16A34A' style='dark' />
 </SafeAreaView>
 
   );

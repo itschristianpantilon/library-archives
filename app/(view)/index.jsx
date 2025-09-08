@@ -1,5 +1,5 @@
   import { useEffect, useState } from "react";
-  import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
+  import { View, Text, FlatList, TouchableOpacity, Alert, StatusBar } from "react-native";
   import { SafeAreaView } from "react-native-safe-area-context";
   import { useRouter } from "expo-router"; 
   import * as FileSystem from "expo-file-system";
@@ -7,6 +7,7 @@
   import SearchInput from "../../components/SearchInput";
   import CloseButton from "../../components/CloseButton";
   import { getFiles } from "../../constants/db";
+
 
 
 
@@ -122,32 +123,32 @@
     const renderItem = ({ item }) => (
       <TouchableOpacity
         onPress={() => handleOpenFile(item)}
-        className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200 mx-4"
+        className="bg-white p-4 mb-3 rounded-md shadow-sm border border-gray-200 mx-4"
       >
         <View className="flex-row items-start">
           <View className="mr-3">
             <Text className="text-2xl">{getTypeIcon(item.type)}</Text>
-            {item.path && (
+            {/* {item.path && (
               <Text className="text-lg">{getSupportedFileIcon(item.path)}</Text>
-            )}
+            )} */}
           </View>
           
           <View className="flex-1">
-            <Text className="text-lg font-bold text-gray-800 mb-2">{item.title}</Text>
-            <Text className="text-gray-600 mb-1">Author: {item.author}</Text>
-            <Text className="text-gray-600 mb-1">Year: {item.yearPublished}</Text>
+            <Text className="text-xl font-bold text-black mb-2">{item.title}</Text>
+            <Text className="text-gray-600 font-plight mb-1">Author: {item.author}</Text>
+            <Text className="text-gray-600 font-plight mb-1">Year: {item.yearPublished}</Text>
 
             {item.uploadDate && (
-              <Text className="text-gray-500 mb-1">Uploaded: {item.uploadDate}</Text>  // ✅ Show upload date
+              <Text className="text-gray-500 mb-1">Date Published: {item.uploadDate}</Text>  // ✅ Show upload date
             )}
 
-            {item.path && (
+            {/* {item.path && (
               <View className="mt-2">
                 <Text className="text-xs text-gray-500">
                   Format: {getFileExtension(item.path).toUpperCase()}
                 </Text>
               </View>
-            )}
+            )} */}
           </View>
 
           
@@ -158,12 +159,6 @@
               </Text>
             </View>
             
-            <TouchableOpacity
-              onPress={() => handleOpenFile(item)}
-              className="bg-blue-500 px-3 py-1 rounded"
-            >
-              <Text className="text-white text-xs font-medium">Open</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -172,9 +167,10 @@
     
 
     return (
-      <SafeAreaView className="flex-1 bg-green-200">
+      <SafeAreaView className="flex-1 bg-green-100">
+        
         {/* Header */}
-        <View className="w-full py-1 flex-row items-center justify-between">
+        <View className="w-full py-5 flex-row items-center justify-between bg-green-600">
           <View className="px-5">
               <CloseButton />
             </View>
@@ -190,23 +186,25 @@
 
         {/* Categories */}
         <View className="flex-row flex-wrap justify-center p-6">
-          {Categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              className={`px-12 py-6 rounded-none font-semibold transition duration-300 ${
-                activeCategory === category ? "bg-green-600" : "bg-white"
-              }`}
-              onPress={() => setActiveCategory(category)}
-            >
-              <Text
-                className={`font-semibold text-lg capitalize ${
-                  activeCategory === category ? "text-white" : "text-gray-700"
+          <View className="flex-row shadow-lg border border-gray-300">
+            {Categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                className={`px-12 py-6 rounded-none font-semibold transition duration-300 ${
+                  activeCategory === category ? "bg-green-600" : "bg-white"
                 }`}
+                onPress={() => setActiveCategory(category)}
               >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  className={`font-semibold text-lg capitalize ${
+                    activeCategory === category ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {/* Items List */}
@@ -258,7 +256,7 @@
             />
           )}
         </View>
-
+            <StatusBar backgroundColor='#16A34A' style='dark' />
       </SafeAreaView>
     );
   }
