@@ -16,6 +16,10 @@
         "foregroundImage": "./assets/icons/libraryLogo.png",
         "backgroundColor": "#ffffff"
       },
+          "permissions": [
+            "READ_EXTERNAL_STORAGE",
+            "WRITE_EXTERNAL_STORAGE"
+          ],
       "edgeToEdgeEnabled": true,
       "package": "com.crstiannn.libraryarchivessystem"
     },

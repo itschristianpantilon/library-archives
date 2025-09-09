@@ -31,7 +31,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'library-archives-system'
+rootProject.name = 'Library Archive'
 
 expoAutolinking.useExpoVersionCatalog()
 
