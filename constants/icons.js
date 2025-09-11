@@ -7,6 +7,11 @@ import back from '../assets/icons/back.png';
 import scan from '../assets/icons/scan.png';
 import upload from '../assets/icons/upload.png';
 import backWhite from '../assets/icons/backWhite.png';
+import next from '../assets/icons/next.png';
+import previous from '../assets/icons/previous.png';
+
+import background from '../assets/images/background.png';
+import lightBackground from '../assets/images/lightBackground.jpg';
 
 export default {
     add,
@@ -18,5 +23,9 @@ export default {
     scan,
     upload,
     backWhite,
-    
+    background,
+    lightBackground,
+    next,
+    previous,
+
 }

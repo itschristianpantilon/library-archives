@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert, Image, StatusBar } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import CloseButton from "../../components/CloseButton";
@@ -34,7 +34,7 @@ export default function AddPage() {
       });
 
       setFilePath(destPath);
-      Alert.alert("File Selected", `Stored at: ${destPath}`);
+      Alert.alert("File Selected", `Filename: ${file.name}`);
     } catch (err) {
       console.log("Pick file error:", err);
       Alert.alert("Error", "Could not pick file");
@@ -77,23 +77,34 @@ const saveToDB = async () => {
   // ---------------- UI ----------------
   if (showAddPage) {
     return (
-      <ScrollView className="flex-1 bg-green-200">
+      <ScrollView className="flex-1 bg-white">
         <View className="px-6 py-8">
           {/* Header */}
           <View className="flex-row items-center justify-between mb-8 w-full">
             <TouchableOpacity
-              onPress={() => setShowAddPage(false)}
-              className="bg-green-500 px-4 py-2 flex-row justify-center items-center rounded-lg"
-            >
-              <Image 
-                source={icons.backWhite}
-                className="w-7 h-7 mr-2"
-                resizeMode="contain"
-              />
-              <Text className="text-white font-medium">Close</Text>
+                onPress={() => {
+                  // ✅ Reset the form before closing
+                  setFormData({
+                    type: "",
+                    title: "",
+                    author: "",
+                    yearPublished: "",
+                  });
+                  setFilePath(null);
+                  setShowAddPage(false);
+                }}
+                className="bg-[#084526] px-4 py-2 flex-row justify-center items-center rounded-lg"
+              >
+                <Image 
+                  source={icons.backWhite}
+                  className="w-7 h-7 mr-2"
+                  resizeMode="contain"
+                />
+                <Text className="text-white font-medium">Close</Text>
             </TouchableOpacity>
 
-            <Text className="text-2xl font-bold text-gray-800">Add New Item</Text>
+
+            <Text className="text-2xl font-bold text-gray-800">Upload File</Text>
             <View className="w-16" />
           </View>
 
@@ -113,7 +124,7 @@ const saveToDB = async () => {
                 }
                 className={`mr-3 mb-3 px-6 py-3 rounded-lg ${
                   formData.type === type.key
-                    ? "bg-green-500 border-gray-200"
+                    ? "bg-[#084526] border-gray-200"
                     : "bg-white border-gray-300"
                 }`}
               >
@@ -189,7 +200,7 @@ const saveToDB = async () => {
           <View className="mt-8 flex-row space-x-4">
             <TouchableOpacity
               onPress={saveToDB}
-              className="flex-1 bg-green-400 py-4 rounded-lg"
+              className="flex-1 bg-[#084526] py-4 rounded-lg"
             >
               <Text className="text-white text-center font-bold text-lg">
                 Add Item
@@ -203,51 +214,53 @@ const saveToDB = async () => {
 
   // Home page with buttons
   return (
-    <SafeAreaView className="items-center justify-between w-full h-full bg-green-100">
-      <View className="w-full py-1 px-10 flex-row items-center justify-between bg-green-600">
+    <SafeAreaView className="items-center justify-center w-full h-full ">
+      <Image 
+        source={icons.background}
+        className="flex-1 w-full h-full absolute"
+        resizeMode="cover"
+      />
+    <View className="w-full h-full justify-between items-center">
+      <View className="w-full py-5 px-10 flex-row items-center justify-between">
        
           <CloseButton />
+       
         
         <View />
       </View>
 
-      <View className="flex-row items-center justify-center w-full h-full flex-1 absolute">
-        {/* Welcome Text */}
-        <View className="justify-center items-center">
-          <View className="screen-center py-10">
-            <Text className="text-7xl font-pprimary text-green-600">WELCOME TO SLSU</Text>
-            <Text className="text-5xl font-pprimary text-green-600">LIBRARY ARCHIVE'S</Text>
-          </View>
 
-          {/* Buttons */}
-          <View className="w-full flex-row justify-center items-center">
+      {/* Upload Instructions */}
+      <View className="px-5 py-3 rounded-3xl w-[65%] mb-8 justify-center items-center bg-white/90 flex-row">
+        <View className="justify-center items-center w-1/3">
             <CustomButton 
               title="Upload" 
               handlePress={() => setShowAddPage(true)} 
               textStyles="text-white"
               icon={icons.upload}
               iconStyle="w-7 h-7"
+              containerStyles="bg-[#084526]  rounded-full"
             />
           </View>
-
-        </View>
-      </View>
-            {/* Upload Instructions */}
-            <View className="px-8 pb-10">
-              <Text className="text-xl font-psemibold text-gray-800 text-center mb-3">
+        <View>
+              <Text className="text-xl font-psemibold text-gray-800 text-center mb-2">
                 How to Upload Files
               </Text>
-              <Text className="text-base text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button above.</Text>
-              <Text className="text-base text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF).</Text>
-              <Text className="text-base text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
-              <Text className="text-base text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
-              <Text className="text-base text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
+              <Text className="text-sm text-gray-700 mb-1">1️⃣ Tap the <Text className="font-semibold text-green-700">Upload</Text> button.</Text>
+              <Text className="text-sm text-gray-700 mb-1">2️⃣ Choose a file from your device (PDF).</Text>
+              <Text className="text-sm text-gray-700 mb-1">3️⃣ Enter details such as <Text className="font-semibold">Title, Author, and Year Published</Text>.</Text>
+              <Text className="text-sm text-gray-700 mb-1">4️⃣ Select the correct <Text className="font-semibold">Category</Text> (Book, Thesis, or Magazine).</Text>
+              <Text className="text-sm text-gray-700 mb-1">5️⃣ Press <Text className="font-semibold text-green-700">Save</Text> to upload to the archive.</Text>
 
               <Text className="text-sm text-gray-500 mt-3 text-center">
                 📌 Note: Uploaded files will be stored in the library system and can be viewed or deleted later.
               </Text>
-            </View>
-    <StatusBar backgroundColor='#16A34A' style='dark' />
+        </View>
+      </View>
+
+
+    </View>
+    
 </SafeAreaView>
 
   );

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert, Dimensions, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import Pdf from "react-native-pdf";
+import icons from "../constants/icons";
 
 export default function FixedPdfViewer() {
   const router = useRouter();
@@ -258,14 +259,19 @@ export default function FixedPdfViewer() {
               <TouchableOpacity
                 onPress={goToPrevSpread}
                 disabled={!canGoPrev()}
-                className={`px-4 py-2 rounded-lg ${
-                  canGoPrev() ? "bg-green-600" : "bg-gray-300"
+                className={`flex-row items-center justify-center px-4 py-2 rounded-full ${
+                  canGoPrev() ? "bg-[#0a8545]" : "bg-gray-300"
                 }`}
               >
-                <Text className={`font-semibold ${
+                <Image 
+                  source={icons.previous}
+                  resizeMode="contain"
+                  className="w-5 h-5 mr-1"
+                />
+                <Text className={`font-pregular text-xs ${
                   canGoPrev() ? "text-white" : "text-gray-500"
                 }`}>
-                  ⬅ Back
+                  Back
                 </Text>
               </TouchableOpacity>
 
@@ -288,15 +294,22 @@ export default function FixedPdfViewer() {
               <TouchableOpacity
                 onPress={goToNextSpread}
                 disabled={!canGoNext()}
-                className={`px-4 py-2 rounded-lg ${
-                  canGoNext() ? "bg-green-600" : "bg-gray-300"
+                className={`flex-row items-center justify-center px-4 py-2 rounded-full ${
+                  canGoNext() ? "bg-[#0a8545]" : "bg-gray-300"
                 }`}
               >
-                <Text className={`font-semibold ${
+                
+                <Text className={`font-semibold text-xs ${
                   canGoNext() ? "text-white" : "text-gray-500"
                 }`}>
-                  Next ➡
+                  Next
                 </Text>
+
+                <Image 
+                  source={icons.next}
+                  resizeMode="contain"
+                  className="w-5 h-5 ml-1"
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -332,14 +345,19 @@ export default function FixedPdfViewer() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-green-100">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View className="px-4 py-3 flex-row items-center justify-between bg-white border-b border-gray-200">
         <TouchableOpacity 
           onPress={() => router.back()} 
-          className="px-3 py-2 bg-green-100 rounded-lg"
+          className="px-5 py-2 bg-[#084526] rounded-full items-center justify-center flex-row"
         >
-          <Text className="text-green-700 font-semibold">← Back</Text>
+          <Image 
+            source={icons.close}
+            resizeMode="contain"
+            className="w-7 h-7 mr-2"
+          />
+          <Text className="text-white font-semibold text-sm">Close</Text>
         </TouchableOpacity>
         
         <View className="flex-1 items-center mx-4">
@@ -347,7 +365,7 @@ export default function FixedPdfViewer() {
             {title || "Document"}
           </Text>
           {fileType && (
-            <Text className="text-xs text-gray-500 uppercase">
+            <Text className="font-semibold text-gray-500 uppercase">
               {fileType} • {formatFileSize(fileSize)}
             </Text>
           )}
@@ -355,9 +373,9 @@ export default function FixedPdfViewer() {
 
         <TouchableOpacity 
           onPress={() => setBookMode(!bookMode)} 
-          className="px-3 py-2 bg-yellow-100 rounded-lg"
+          className="px-4 rounded-full py-3 bg-orange-900 "
         >
-          <Text className="text-yellow-700 font-semibold text-xs">
+          <Text className="text-white font-semibold text-sm">
             {bookMode ? "Single Page" : "Book Mode"}
           </Text>
         </TouchableOpacity>

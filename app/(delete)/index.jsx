@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   Alert,
   StatusBar,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CloseButton from "../../components/CloseButton";
 import SearchInput from "../../components/SearchInput";
 import * as FileSystem from "expo-file-system";
 import { getFiles, deleteFile } from "../../constants/db";
+import icons from "../../constants/icons";
 
 const Categories = ["book", "thesis", "magazine", "reports"];
 
@@ -109,7 +111,7 @@ export default function DeletePage() {
       <View className="h-full">
         <TouchableOpacity
           onPress={() => handleDelete(item.id, item.path)}
-          className="bg-red-500 px-5 py-2 rounded-md"
+          className="bg-red-500 px-5 py-2 rounded-full"
         >
           <Text className="text-white font-psemibold text-sm">Delete</Text>
         </TouchableOpacity>
@@ -118,9 +120,16 @@ export default function DeletePage() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-green-100">
+    <SafeAreaView className="flex-1 bg-white">
+
+      <Image
+              source={icons.lightBackground}
+              className="flex-1 w-full h-full absolute"
+              resizeMode="cover"
+            />
+
       {/* Header */}
-      <View className="w-full py-5 flex-row items-center justify-between bg-green-600">
+      <View className="w-full py-5 flex-row items-center justify-between">
         <View className="px-5">
           <CloseButton />
         </View>
@@ -141,7 +150,7 @@ export default function DeletePage() {
             <TouchableOpacity
               key={category}
               className={`px-12 py-6 rounded-none font-semibold transition duration-300 ${
-                activeCategory === category ? "bg-green-600" : "bg-white"
+                activeCategory === category ? "bg-[#084526]" : "bg-white"
               }`}
               onPress={() => setActiveCategory(category)}
             >
@@ -204,7 +213,6 @@ export default function DeletePage() {
         )}
       </View>
 
-      <StatusBar backgroundColor='#16A34A' style='dark' />
     </SafeAreaView>
   );
 }
