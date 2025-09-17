@@ -115,7 +115,7 @@ const saveToDB = async () => {
               { key: "book", label: "Books" },
               { key: "thesis", label: "Thesis" },
               { key: "magazine", label: "Magazine" },
-              { key: "reports", label: "Reports" },
+              
             ].map((type) => (
               <TouchableOpacity
                 key={type.key}

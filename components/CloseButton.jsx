@@ -11,11 +11,11 @@ const CloseButton = () => {
       onPress={()=> router.back()}>
       <Image 
         source={icons.backWhite}
-        className="w-10 h-10 mr-2"
+        className="w-8 h-8 mr-2"
         resizeMode='contain'
       />
 
-      <Text className="font-pmedium text-md text-white">Back</Text>
+      <Text className="font-pmedium text-xs text-white">Back</Text>
     </TouchableOpacity>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, Image } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as FileSystem from "expo-file-system";
@@ -213,32 +213,76 @@ export default function ViewPage() {
       {/* Items List */}
       <View className="flex-1 mt-4">
         {activeCategory === "reports" ? (
-          <View className="flex-1 items-center justify-start px-6">
-
-            <View className="bg-white shadow-md rounded-lg p-6 w-full">
-              <View className="flex-row justify-between items-center py-2">
-                <Text className="text-gray-800 font-pregular text-2xl">LIST OF BOOKS </Text>
-                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.book}</Text>
+          <ScrollView className="flex-1 px-6">
+            {/* Summary Totals */}
+            <View className="bg-white shadow-md rounded-lg p-6 mb-6">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-gray-800 font-pregular text-lg"></Text>
+                <Text className="text-gray-800 font-psemibold">Total</Text>
+              </View>
+              <View className="flex-row justify-between items-center py-1">
+                <Text className="text-gray-800 font-pregular text-lg">Books</Text>
+                <Text className="text-gray-800 font-psemibold mr-3">{counts.book}</Text>
               </View>
 
-              <View className="flex-row justify-between items-center py-2">
-                <Text className="text-gray-800 font-pregular text-2xl">LIST OF THESIS </Text>
-                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.thesis}</Text>
+              <View className="flex-row justify-between items-center py-1">
+                <Text className="text-gray-800 font-pregular text-lg">Thesis</Text>
+                <Text className="text-gray-800 font-psemibold mr-3">{counts.thesis}</Text>
               </View>
 
-              <View className="flex-row justify-between items-center py-2">
-                <Text className="text-gray-800 font-pregular text-2xl">LIST OF MAGAZINES </Text>
-                <Text className="text-gray-800 font-psemibold">TOTAL:  {counts.magazine}</Text>
-              </View>
-
-
-              <View className="mt-4 border-t border-gray-300 pt-3">
-                <Text className="text-gray-600 text-sm">
-                  This report automatically updates when you add or delete files.
-                </Text>
+              <View className="flex-row justify-between items-center py-1">
+                <Text className="text-gray-800 font-pregular text-lg">Magazines</Text>
+                <Text className="text-gray-800 font-psemibold mr-3">{counts.magazine}</Text>
               </View>
             </View>
-          </View>
+
+            {/* ✅ Group & Sort by uploadDate */}
+            {/* ✅ Group & Sort by uploadDate */}
+            {Object.entries(
+              items.reduce((groups, file) => {
+                const date = file.uploadDate || "Unknown Date";
+                if (!groups[date]) groups[date] = [];
+                groups[date].push(file);
+                return groups;
+              }, {}) // ✅ removed TypeScript typing
+            )
+              // sort by date DESC (latest first)
+              .sort(([a], [b]) => (a < b ? 1 : -1))
+              .map(([date, files]) => (
+                <View
+                  key={date}
+                  className="bg-white shadow-md rounded-lg p-5 mb-4 border border-gray-200"
+                >
+                  {/* Date Header */}
+                  <Text className="text-lg font-bold text-[#084526]">
+                    Uploaded on: {date}
+                  </Text>
+
+                  {/* Files in this date */}
+                  {files
+                    .sort((a, b) => (a.id < b.id ? 1 : -1)) // ✅ newest files first inside group
+                    .map((file) => (
+                      <View
+                        key={file.id}
+                        className="border-t border-gray-200 pt-3 mt-3"
+                      >
+                        <Text className="text-md font-semibold text-gray-800">
+                          {file.title}
+                        </Text>
+                          <View className="flex-row w-full items-center gap-5">
+                              <Text className="text-gray-600 font-pregular text-sm">Author: {file.author}</Text>
+                              <Text className="text-gray-600 font-pregular text-sm">
+                                Year Published: {file.yearPublished} 
+                              </Text>
+                              <Text className="text-gray-600 capitalize font-pregular text-sm">
+                                Category: {file.type}
+                              </Text>
+                          </View> 
+                      </View>
+                    ))}
+                </View>
+              ))}
+          </ScrollView>
         ) : filteredItems.length === 0 ? (
           <View className="flex-1 justify-center items-center">
             <Text className="text-2xl mb-2">{getTypeIcon(activeCategory)}</Text>

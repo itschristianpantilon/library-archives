@@ -7,6 +7,9 @@ import * as Sharing from "expo-sharing";
 import Pdf from "react-native-pdf";
 import icons from "../constants/icons";
 
+
+
+
 export default function FixedPdfViewer() {
   const router = useRouter();
   const { filePath, title } = useLocalSearchParams();
@@ -18,7 +21,8 @@ export default function FixedPdfViewer() {
   const [textContent, setTextContent] = useState(null);
   const [totalPages, setTotalPages] = useState(1000);
   const [page, setPage] = useState(1);
-  const [bookMode, setBookMode] = useState(false);
+  const [bookMode, setBookMode] = useState(true);
+  
 
   useEffect(() => {
     loadFile();
@@ -86,6 +90,8 @@ export default function FixedPdfViewer() {
     console.log("PDF loaded with", pages, "pages");
     setTotalPages(pages);
   };
+
+  
 
   // Book mode navigation logic
   const getLeftPage = () => {
@@ -184,36 +190,39 @@ export default function FixedPdfViewer() {
     if (fileType === "pdf") {
       const source = { uri: filePath.startsWith("file://") ? filePath : `file://${filePath}` };
       
-      console.log("=== PDF SOURCE DEBUG ===");
-      console.log("Original filePath:", filePath);
-      console.log("Constructed source:", source);
-      console.log("========================");
-
       if (bookMode) {
         const leftPage = getLeftPage();
         const rightPage = getRightPage();
         
-        console.log("=== BOOK MODE RENDER ===");
-        console.log("Current totalPages:", totalPages);
-        console.log("Current page state:", page);
-        console.log("Left page:", leftPage);
-        console.log("Right page:", rightPage);
-        console.log("Right page <= totalPages:", rightPage <= totalPages);
-        console.log("========================");
-        
         return (
-          <View className="flex-1 bg-black">
+          <View className="w-[85%] h-[90%] items-center justify-center ">
             
-            <View className="flex-row flex-1 items-center">
+            <View className="flex-row items-center justify-center">
+
+            {/* Previous */}
+              <TouchableOpacity
+                onPress={goToPrevSpread}
+                disabled={!canGoPrev()}
+                className={`flex-row items-center justify-center p-3 rounded-full mr-5 ${
+                  canGoPrev() ? "bg-[#0a8545]" : "bg-gray-300"
+                }`}
+              >
+                <Image 
+                  source={icons.previous}
+                  resizeMode="contain"
+                  className="w-5 h-5 mr-1"
+                />
+              </TouchableOpacity>
+
               {/* Left Page */}
-              <View className="flex-1 border-r border-gray-600">
+              <View className="border-[10px] border-[#084526]">
                 <Pdf
                   key={`left-${leftPage}`}
                   source={source}
                   page={leftPage}
                   scrollEnabled={false} 
                   style={{
-                    width: Dimensions.get("window").width / 2,
+                    width: Dimensions.get("window").width / 3,
                     height: "100%",
                   }}
                   onLoadComplete={handlePdfLoadComplete}
@@ -225,7 +234,7 @@ export default function FixedPdfViewer() {
               </View>
 
               {/* Right Page */}
-              <View className="flex-1">
+              <View className="border-r-[10px] border-t-[10px] border-b-[10px] border-[#084526] right-page">
                 {totalPages > 0 && rightPage <= totalPages ? (
                   <Pdf
                     key={`right-${rightPage}`}
@@ -233,7 +242,7 @@ export default function FixedPdfViewer() {
                     page={rightPage}
                     scrollEnabled={false} 
                     style={{
-                      width: Dimensions.get("window").width / 2,
+                      width: Dimensions.get("window").width / 3,
                       height: "100%",
                     }}
                     onError={(err) => {
@@ -251,59 +260,15 @@ export default function FixedPdfViewer() {
                   </View>
                 )}
               </View>
-            </View>
 
-            {/* Navigation Controls */}
-            <View className="flex-row justify-between px-6 py-3 bg-white border-t border-gray-200">
-              {/* Previous */}
-              <TouchableOpacity
-                onPress={goToPrevSpread}
-                disabled={!canGoPrev()}
-                className={`flex-row items-center justify-center px-4 py-2 rounded-full ${
-                  canGoPrev() ? "bg-[#0a8545]" : "bg-gray-300"
-                }`}
-              >
-                <Image 
-                  source={icons.previous}
-                  resizeMode="contain"
-                  className="w-5 h-5 mr-1"
-                />
-                <Text className={`font-pregular text-xs ${
-                  canGoPrev() ? "text-white" : "text-gray-500"
-                }`}>
-                  Back
-                </Text>
-              </TouchableOpacity>
-
-              {/* Page Info */}
-              <Text className="text-gray-700 font-bold self-center">
-                {totalPages > 0 ? (
-                  leftPage === rightPage ? (
-                    `Page ${leftPage} / ${totalPages}`
-                  ) : (
-                    rightPage <= totalPages ? 
-                      `Pages ${leftPage}-${rightPage} / ${totalPages}` :
-                      `Page ${leftPage} / ${totalPages}`
-                  )
-                ) : (
-                  "Loading..."
-                )}
-              </Text>
-
-              {/* Next */}
+            {/* Next */}
               <TouchableOpacity
                 onPress={goToNextSpread}
                 disabled={!canGoNext()}
-                className={`flex-row items-center justify-center px-4 py-2 rounded-full ${
+                className={`flex-row items-center justify-center p-3 rounded-full ml-5 ${
                   canGoNext() ? "bg-[#0a8545]" : "bg-gray-300"
                 }`}
               >
-                
-                <Text className={`font-semibold text-xs ${
-                  canGoNext() ? "text-white" : "text-gray-500"
-                }`}>
-                  Next
-                </Text>
 
                 <Image 
                   source={icons.next}
@@ -312,22 +277,33 @@ export default function FixedPdfViewer() {
                 />
               </TouchableOpacity>
             </View>
+
+            {/* Navigation Controls */}
+            <View className="flex-row justify-between px-6 py-3 mt-2 rounded-full bg-white">
+
+
+              {/* Page Info */}
+              <Text className="text-gray-700 font-bold self-center ">
+                {totalPages > 0 ? (
+                  leftPage === rightPage ? (
+                    `Page ${leftPage} / ${totalPages}`
+                  ) : (
+                    rightPage <= totalPages ? 
+                      `Pages ${leftPage}-${rightPage}` :
+                      `Page ${leftPage} / ${totalPages}`
+                  )
+                ) : (
+                  "Loading..."
+                )}
+              </Text>
+
+
+            </View>
           </View>
         );
       }
 
-      // Normal scrolling mode
-      return (
-        <Pdf
-          source={source}
-          style={{ flex: 1, width: Dimensions.get("window").width }}
-          onLoadComplete={handlePdfLoadComplete}
-          onError={(err) => {
-            console.log("PDF Error:", err);
-            setError("Failed to load PDF: " + err.message);
-          }}
-        />
-      );
+      
     }
 
     // Other file types
@@ -345,55 +321,53 @@ export default function FixedPdfViewer() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    
+    <SafeAreaView className="flex-1 bg-white justify-center items-center ">
+            <Image
+              source={icons.lightBackground}
+              className="flex-1 w-full h-full absolute"
+              resizeMode="cover"
+            />
       {/* Header */}
-      <View className="px-4 py-3 flex-row items-center justify-between bg-white border-b border-gray-200">
+      <View className="w-full py-2 flex-row justify-between items-center right-page">
         <TouchableOpacity 
           onPress={() => router.back()} 
-          className="px-5 py-2 bg-[#084526] rounded-full items-center justify-center flex-row"
+          className="px-3 py-2 ml-5 bg-[#084526] rounded-full items-center justify-center flex-row"
         >
           <Image 
             source={icons.close}
             resizeMode="contain"
-            className="w-7 h-7 mr-2"
+            className="w-5 h-5 mr-2"
           />
-          <Text className="text-white font-semibold text-sm">Close</Text>
+          <Text className="text-white font-semibold text-xs">Close</Text>
         </TouchableOpacity>
         
-        <View className="flex-1 items-center mx-4">
-          <Text numberOfLines={1} className="text-lg font-bold text-gray-800">
+        <View className="absolute w-full justify-center items-center">
+          <Text numberOfLines={1} className="text-md font-bold text-gray-800">
             {title || "Document"}
           </Text>
           {fileType && (
-            <Text className="font-semibold text-gray-500 uppercase">
+            <Text className="font-semibold text-gray-500 uppercase text-xs">
               {fileType} • {formatFileSize(fileSize)}
             </Text>
           )}
         </View>
 
-        <TouchableOpacity 
+        <View />
+
+        {/* <TouchableOpacity 
           onPress={() => setBookMode(!bookMode)} 
           className="px-4 rounded-full py-3 bg-orange-900 "
         >
           <Text className="text-white font-semibold text-sm">
             {bookMode ? "Single Page" : "Book Mode"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Content */}
-      <View className="flex-1">{renderContent()}</View>
-
-      {/* Footer */}
-      {!loading && !error && (
-        <View className="bg-white px-4 py-2 border-t border-gray-200">
-          <Text className="text-center text-gray-600 text-sm">
-            {fileType === "txt" ? "Text Preview" : 
-             fileType === "pdf" ? (bookMode ? "Book-style PDF Viewer" : "PDF Viewer") : 
-             "File Manager"}
-          </Text>
-        </View>
-      )}
+      <View className="flex-1 items-center justify-center">{renderContent()}</View>
+       
     </SafeAreaView>
   );
 }

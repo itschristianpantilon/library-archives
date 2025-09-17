@@ -2,7 +2,9 @@ import { SplashScreen, Stack } from "expo-router";
 import './global.css';
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
+import { GestureHandlerRootView } from "react-native-gesture-handler"; // ✅ import
 import { initDB } from "../constants/db";  // ✅ import DB init
+
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
@@ -36,13 +38,15 @@ export default function RootLayout() {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="Home" options={{ headerShown: false }} />
-      <Stack.Screen name="pdfReader" options={{ headerShown: false }} />
-      <Stack.Screen name="(add)" options={{ headerShown: false }} />
-      <Stack.Screen name="(delete)" options={{ headerShown: false }} />
-      <Stack.Screen name="(view)" options={{ headerShown: false }} />
-    </Stack>
+
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="Home" options={{ headerShown: false }} />
+        <Stack.Screen name="pdfReader" options={{ headerShown: false }} />
+        <Stack.Screen name="(add)" options={{ headerShown: false }} />
+        <Stack.Screen name="(delete)" options={{ headerShown: false }} />
+        <Stack.Screen name="(view)" options={{ headerShown: false }} />
+      </Stack>
+
   );
 }
