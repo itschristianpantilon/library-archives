@@ -9,5 +9,7 @@
 }
 
 .right-page {
-background-color: black;
+  -webkit-transform: rotateY(-34deg);
+  -moz-transform: rotateY(-34deg);
+  transform: rotateY(-34deg);
 }

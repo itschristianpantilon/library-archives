@@ -234,7 +234,7 @@ export default function FixedPdfViewer() {
               </View>
 
               {/* Right Page */}
-              <View className="border-r-[10px] border-t-[10px] border-b-[10px] border-[#084526] right-page">
+              <View className="border-r-[10px] border-t-[10px] border-b-[10px] border-[#084526]">
                 {totalPages > 0 && rightPage <= totalPages ? (
                   <Pdf
                     key={`right-${rightPage}`}
@@ -329,7 +329,7 @@ export default function FixedPdfViewer() {
               resizeMode="cover"
             />
       {/* Header */}
-      <View className="w-full py-2 flex-row justify-between items-center right-page">
+      <View className="w-full py-2 flex-row justify-between items-center">
         <TouchableOpacity 
           onPress={() => router.back()} 
           className="px-3 py-2 ml-5 bg-[#084526] rounded-full items-center justify-center flex-row"
