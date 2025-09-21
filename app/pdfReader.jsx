@@ -204,7 +204,7 @@ export default function FixedPdfViewer() {
                 onPress={goToPrevSpread}
                 disabled={!canGoPrev()}
                 className={`flex-row items-center justify-center p-3 rounded-full mr-5 ${
-                  canGoPrev() ? "bg-[#0a8545]" : "bg-gray-300"
+                  canGoPrev() ? "bg-[#084526]" : "bg-gray-300"
                 }`}
               >
                 <Image 
@@ -266,7 +266,7 @@ export default function FixedPdfViewer() {
                 onPress={goToNextSpread}
                 disabled={!canGoNext()}
                 className={`flex-row items-center justify-center p-3 rounded-full ml-5 ${
-                  canGoNext() ? "bg-[#0a8545]" : "bg-gray-300"
+                  canGoNext() ? "bg-[#084526]" : "bg-gray-300"
                 }`}
               >
 
