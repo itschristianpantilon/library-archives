@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import Pdf from "react-native-pdf";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import icons from "../constants/icons";
 
 
@@ -257,14 +258,38 @@ export default function FixedPdfViewer() {
       const leftPage = currentPage % 2 === 1 ? currentPage : currentPage - 1;
       const rightPage = leftPage + 1;
 
+      // Left page swipe gesture (swipe right to go to previous page)
+      const leftPageSwipe = Gesture.Pan()
+        .onEnd((event) => {
+          const SWIPE_THRESHOLD = 50;
+          if (event.translationX > SWIPE_THRESHOLD) {
+            // Swiped right on left page - go to previous page
+            if (canGoPrev()) {
+              goToPrevPage();
+            }
+          }
+        });
+
+      // Right page swipe gesture (swipe left to go to next page)
+      const rightPageSwipe = Gesture.Pan()
+        .onEnd((event) => {
+          const SWIPE_THRESHOLD = 50;
+          if (event.translationX < -SWIPE_THRESHOLD) {
+            // Swiped left on right page - go to next page
+            if (canGoNext()) {
+              goToNextPage();
+            }
+          }
+        });
+
       return (
-        <View className="w-[85%] h-[90%] items-center justify-center">
-          <View className="flex-row items-center justify-center">
+        <View className="w-full h-full items-center justify-center">
+          <View className="flex-row items-center justify-center w-full h-full">
             {/* Previous */}
             <TouchableOpacity
               onPress={goToPrevPage}
               disabled={!canGoPrev()}
-              className={`flex-row items-center justify-center p-3 rounded-full mr-5 ${
+              className={`flex-row items-center justify-center p-3 rounded-full mr-3 ${
                 canGoPrev() ? "bg-[#084526]" : "bg-gray-300"
               }`}
             >
@@ -275,54 +300,58 @@ export default function FixedPdfViewer() {
               />
             </TouchableOpacity>
 
-            {/* Left Page */}
-            <View className="border-[10px] border-[#084526]">
-              <Pdf
-                key={`left-${leftPage}`}
-                source={source}
-                page={leftPage}
-                scrollEnabled={false}
-                style={{
-                  width: Dimensions.get("window").width / 3,
-                  height: "100%",
-                }}
-                onLoadComplete={handlePdfLoadComplete}
-                onPageChanged={handlePageChanged}
-                onError={(err) => {
-                  console.error("Left PDF Error:", err);
-                  setError(`Failed to load PDF: ${err?.message || 'Unknown error'}`);
-                }}
-              />
-            </View>
-
-            {/* Right Page */}
-            <View className="border-r-[10px] border-t-[10px] border-b-[10px] border-[#084526]">
-              {totalPages === 0 || rightPage <= totalPages ? (
+            {/* Left Page - Swipe RIGHT to go to previous page */}
+            <GestureDetector gesture={leftPageSwipe}>
+              <View className="border-[10px] border-[#084526]">
                 <Pdf
-                  key={`right-${rightPage}`}
+                  key={`left-${leftPage}`}
                   source={source}
-                  page={rightPage}
+                  page={leftPage}
                   scrollEnabled={false}
                   style={{
-                    width: Dimensions.get("window").width / 3,
-                    height: "100%",
+                    width: Dimensions.get("window").width / 2.5,
+                    height: Dimensions.get("window").height * 0.75,
                   }}
+                  onLoadComplete={handlePdfLoadComplete}
+                  onPageChanged={handlePageChanged}
                   onError={(err) => {
-                    console.error("Right PDF Error:", err);
+                    console.error("Left PDF Error:", err);
+                    setError(`Failed to load PDF: ${err?.message || 'Unknown error'}`);
                   }}
                 />
-              ) : (
-                <View className="flex-1 items-center justify-center bg-gray-800" style={{ width: Dimensions.get("window").width / 3 }}>
-                  <Text className="text-gray-400">End of Document</Text>
-                </View>
-              )}
-            </View>
+              </View>
+            </GestureDetector>
+
+            {/* Right Page - Swipe LEFT to go to next page */}
+            <GestureDetector gesture={rightPageSwipe}>
+              <View className="border-r-[10px] border-t-[10px] border-b-[10px] border-[#084526]">
+                {totalPages === 0 || rightPage <= totalPages ? (
+                  <Pdf
+                    key={`right-${rightPage}`}
+                    source={source}
+                    page={rightPage}
+                    scrollEnabled={false}
+                    style={{
+                      width: Dimensions.get("window").width / 2.5,
+                      height: Dimensions.get("window").height * 0.75,
+                    }}
+                    onError={(err) => {
+                      console.error("Right PDF Error:", err);
+                    }}
+                  />
+                ) : (
+                  <View className="flex-1 items-center justify-center bg-gray-800" style={{ width: Dimensions.get("window").width / 2.5, height: Dimensions.get("window").height * 0.75 }}>
+                    <Text className="text-gray-400">End of Document</Text>
+                  </View>
+                )}
+              </View>
+            </GestureDetector>
 
             {/* Next */}
             <TouchableOpacity
               onPress={goToNextPage}
               disabled={!canGoNext()}
-              className={`flex-row items-center justify-center p-3 rounded-full ml-5 ${
+              className={`flex-row items-center justify-center p-3 rounded-full ml-3 ${
                 canGoNext() ? "bg-[#084526]" : "bg-gray-300"
               }`}
             >
@@ -335,7 +364,7 @@ export default function FixedPdfViewer() {
           </View>
 
           {/* Navigation Controls */}
-          <View className="flex-row justify-between px-6 py-3 mt-2 rounded-full bg-white">
+          <View className="flex-row justify-between px-6 py-3 mt-2 rounded-full bg-white absolute bottom-4">
             <Text className="text-gray-700 font-bold self-center">
               {totalPages === 0 ? (
                 "Loading..."
